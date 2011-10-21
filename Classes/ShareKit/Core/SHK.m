@@ -89,6 +89,17 @@ BOOL SHKinit;
 	[helper setRootViewController:vc];	
 }
 
+- (UIViewController*)getPresentingViewController
+{
+    UIViewController *pv = [currentView parentViewController];
+    
+    if (nil != pv)
+        return pv;
+    if ([currentView respondsToSelector:@selector(presentingViewController)])
+        return [currentView presentingViewController];
+    return nil;
+}
+
 - (void)showViewController:(UIViewController *)vc
 {	
 	if (rootViewController == nil)
@@ -127,7 +138,7 @@ BOOL SHKinit;
 	if (currentView != nil)
 	{
 		self.pendingView = vc;
-		[[currentView parentViewController] dismissModalViewControllerAnimated:YES];
+		[[self getPresentingViewController] dismissModalViewControllerAnimated:YES];
 		return;
 	}
 		
@@ -179,10 +190,10 @@ BOOL SHKinit;
 	if (currentView != nil)
 	{
 		// Dismiss the modal view
-		if ([currentView parentViewController] != nil)
+		if ([self getPresentingViewController] != nil)
 		{
 			self.isDismissingView = YES;
-			[[currentView parentViewController] dismissModalViewControllerAnimated:animated];
+			[[self getPresentingViewController] dismissModalViewControllerAnimated:animated];
 		}
 		
 		else
